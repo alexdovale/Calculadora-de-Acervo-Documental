@@ -1,516 +1,484 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR">no
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Metragem de Acervo Documental</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/alexdovale/calculo-mensuracao-dperj-codoc/main/icon_logo.png" type="image/png">
+    <title>Checklist de Inspeção e Perícia Técnica Veicular</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+
         body {
             font-family: 'Inter', sans-serif;
-        }
-        .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease-in-out;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            transition: background-color 0.3s, transform 0.2s;
-            cursor: pointer;
-            text-align: center;
-        }
-        .btn-primary {
-            background-color: #006A4E; /* Verde Pantone 356C */
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #005c43;
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background-color: #e5e7eb;
-            color: #374151;
-        }
-        .btn-secondary:hover {
-            background-color: #d1d5db;
-        }
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-        }
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-        .input-field {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: #006A4E;
-            box-shadow: 0 0 0 3px rgba(0, 106, 78, 0.2);
-        }
-        .instruction-box {
-            font-size: 0.8rem;
-            color: #6b7280;
-            margin-top: 0.75rem;
-            padding: 0.5rem;
-            background-color: #f9fafb;
-            border-radius: 0.25rem;
+            background-color: #f1f5f9; /* slate-100 */
+            color: #334155; /* slate-700 */
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
 
-        /* --- Estilos do Fluxograma Linha do Tempo Vertical --- */
-        .timeline-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            position: relative;
-        }
-        .timeline-container::after {
-            content: '';
-            position: absolute;
-            width: 4px;
-            background-color: #e5e7eb; /* gray-200 */
-            top: 15px;
-            bottom: 15px;
-            left: 50%;
-            margin-left: -2px;
-        }
-        .timeline-step {
-            padding: 10px 40px;
-            position: relative;
-            width: 50%;
-        }
-        /* Círculo na linha do tempo */
-        .timeline-step::after {
-            content: '';
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            right: -12px;
-            background-color: white;
-            border: 4px solid;
-            top: 25px;
-            border-radius: 50%;
-            z-index: 1;
-        }
-        /* Steps à esquerda */
-        .timeline-step.left {
-            left: 0;
-        }
-        /* Steps à direita */
-        .timeline-step.right {
-            left: 50%;
-        }
-        .timeline-step.right::after {
-            left: -12px;
-        }
-        .timeline-content {
-            padding: 1rem;
-            background-color: #f9fafb; /* gray-50 */
-            position: relative;
-            border-radius: 0.5rem;
-            border: 1px solid #e5e7eb; /* gray-200 */
-        }
-         .timeline-content h3 {
-            font-weight: 700;
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-         }
-         .timeline-content p {
-            font-size: 0.875rem;
-            line-height: 1.4;
-            color: #4b5563; /* gray-600 */
-         }
-        .timeline-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 0.5rem;
-        }
+        /* Oculta elementos estritamente visuais da tela na hora da impressão */
+        .only-screen { display: block; }
+        .only-print { display: none; }
 
-        /* Cores dos Passos */
-        .timeline-step:nth-child(1)::after { border-color: #6366f1; } .timeline-step:nth-child(1) h3 { color: #6366f1; }
-        .timeline-step:nth-child(2)::after { border-color: #7c3aed; } .timeline-step:nth-child(2) h3 { color: #7c3aed; }
-        .timeline-step:nth-child(3)::after { border-color: #9333ea; } .timeline-step:nth-child(3) h3 { color: #9333ea; }
-        .timeline-step:nth-child(4)::after { border-color: #c026d3; } .timeline-step:nth-child(4) h3 { color: #c026d3; }
-        .timeline-step:nth-child(5)::after { border-color: #db2777; } .timeline-step:nth-child(5) h3 { color: #db2777; }
-        .timeline-step:nth-child(6)::after { border-color: #e11d48; } .timeline-step:nth-child(6) h3 { color: #e11d48; }
-        .timeline-step:nth-child(7)::after { border-color: #ea580c; } .timeline-step:nth-child(7) h3 { color: #ea580c; }
-        .timeline-step:nth-child(8)::after { border-color: #d97706; } .timeline-step:nth-child(8) h3 { color: #d97706; }
-        .timeline-step:nth-child(9)::after { border-color: #ca8a04; } .timeline-step:nth-child(9) h3 { color: #ca8a04; }
-        .timeline-step:nth-child(10)::after { border-color: #65a30d; } .timeline-step:nth-child(10) h3 { color: #65a30d; }
-        .timeline-step:nth-child(11)::after { border-color: #16a34a; } .timeline-step:nth-child(11) h3 { color: #16a34a; }
-
-        /* Responsividade para telas pequenas */
-        @media screen and (max-width: 768px) {
-            .timeline-container::after {
-                left: 25px;
+        @media print {
+            @page {
+                size: A4;
+                margin: 10mm 15mm;
             }
-            .timeline-step {
-                width: 100%;
-                padding-left: 60px;
-                padding-right: 15px;
+
+            body {
+                background-color: transparent;
+                padding: 0;
             }
-            .timeline-step.left, .timeline-step.right {
+
+            .only-screen { display: none !important; }
+            .only-print { display: block !important; }
+
+            /* Remove os fundos coloridos, sombras e bordas arredondadas para economizar tinta */
+            .print-card {
+                background-color: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin-bottom: 15px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            /* Configurações de quebra de página */
+            .page-break {
+                page-break-after: always;
+                break-after: page;
+                position: relative;
+                padding-top: 15px;
+            }
+
+            /* Configuração da Marca D'água no Fundo do PDF */
+            .page-break::before {
+                content: "";
+                position: absolute;
+                top: 0;
                 left: 0;
-                margin-bottom: 1rem;
+                width: 100%;
+                height: 100%;
+                background-image: url('https://static.wixstatic.com/media/b36c1b_a7de7def7c1347d4af5323e578d5a2f1%7Emv2.jpg/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/b36c1b_a7de7def7c1347d4af5323e578d5a2f1%7Emv2.jpg');
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: 50%;
+                opacity: 0.10;
+                z-index: -1;
+                pointer-events: none;
             }
-            .timeline-step::after {
-                left: 13px;
+
+            /* Transforma inputs modernos em linhas pontilhadas clássicas */
+            input[type="text"], select {
+                border: none !important;
+                border-bottom: 1px dotted #000 !important;
+                background: transparent !important;
+                border-radius: 0 !important;
+                padding: 0 !important;
+                height: 18px !important;
+                color: #000 !important;
+                font-size: 10px !important;
             }
+
+            ::placeholder { color: transparent; }
+
+            /* Estilização dos títulos no PDF */
+            h2, h3, h4 {
+                color: #000 !important;
+                background-color: #e5e7eb !important;
+                padding: 4px !important;
+                border-left: none !important;
+                font-size: 11px !important;
+                border: 1px solid #000 !important;
+            }
+
+            /* Checklist na impressão */
+            .checklist-print-row {
+                border-bottom: 1px solid #e5e7eb !important;
+                padding: 2px 0 !important;
+            }
+            .checklist-print-row:nth-child(even) { background-color: #f9fafb !important; }
+            
+            /* Ajustes de grid para impressão */
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+            .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+            .md\:col-span-2 { grid-column: span 2 / span 2 !important; }
+        }
+
+        /* Estilos interativos da tela (checkboxes/radios) */
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: #4f46e5; /* indigo-600 */
+            cursor: pointer;
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-4xl mx-auto">
-        <div class="card">
-            <img src="https://raw.githubusercontent.com/alexdovale/calculo-mensuracao-dperj-codoc/main/logo%20(2).png" alt="Logo da Defensoria Pública" class="mx-auto h-16 w-auto mb-6">
-            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Calculadora de Acervo Documental</h1>
-            <p class="text-center text-gray-500 mb-8">Adicione as medições para calcular a metragem linear total do seu acervo.</p>
+<body class="p-4 md:p-8">
 
-            <!-- Seção de Adição de Medidas -->
-            <div id="add-section">
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <!-- Card Caixa-Arquivo -->
-                    <div class="border p-4 rounded-lg bg-gray-50 flex flex-col">
-                        <h3 class="font-semibold text-lg mb-3 text-gray-700 text-center">Documentos em Caixa-Arquivo</h3>
-                        <div class="space-y-3 flex-grow">
-                            <input type="number" id="num-caixas" class="input-field" placeholder="Nº de caixas-arquivo">
-                            <button onclick="addCaixa()" class="btn btn-primary w-full">Adicionar</button>
-                            <div class="instruction-box">
-                                <p><b>Quando utilizar?</b><br>Quando os documentos estiverem em caixas-arquivo.</p>
-                                <p class="mt-1"><b>Como utilizar?</b><br>1º Contabilize as caixas.<br>2º Insira o quantitativo no campo.<br>3º Clique em Adicionar.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Card Pilhas -->
-                    <div class="border p-4 rounded-lg bg-gray-50 flex flex-col">
-                        <h3 class="font-semibold text-lg mb-3 text-gray-700 text-center">Documentos em Pilha</h3>
-                        <div class="space-y-3 flex-grow">
-                            <input type="number" id="altura-pilha" class="input-field" placeholder="Altura da pilha (cm)">
-                            <button onclick="addPilha()" class="btn btn-primary w-full">Adicionar</button>
-                             <div class="instruction-box">
-                                <p><b>Quando utilizar?</b><br>Para documentos que não estão em caixas. Ex: processos, pastas, livros, maços e papéis soltos.</p>
-                                <p class="mt-1"><b>Como utilizar?</b><br>1º Junte os itens e meça a altura da pilha em cm.<br>2º Insira o valor no campo.<br>3º Clique em Adicionar.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <button onclick="window.print()" class="only-screen fixed bottom-6 right-6 bg-violet-600 text-white font-black px-6 py-4 rounded-full text-sm hover:bg-violet-700 hover:scale-105 active:scale-95 uppercase transition-all shadow-xl flex items-center gap-2 z-50 border-2 border-violet-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+        Gerar PDF / Imprimir
+    </button>
 
-            <!-- Seção de Resumo -->
-            <div id="summary-section" class="mt-8 bg-green-50 p-6 rounded-lg" style="--tw-bg-opacity: 0.6;">
-                 <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Resumo do Cálculo</h2>
-                 <div class="grid md:grid-cols-2 gap-6 text-center">
-                     <div>
-                         <p class="text-gray-600 text-sm">Total de Caixas</p>
-                         <p id="total-caixas" class="text-3xl font-bold" style="color: #006A4E;">0</p>
-                         <p id="metros-caixas" class="text-gray-500">0.00 metros lineares</p>
-                     </div>
-                      <div>
-                         <p class="text-gray-600 text-sm">Total de Pilhas</p>
-                         <p id="total-pilhas" class="text-3xl font-bold" style="color: #006A4E;">0</p>
-                         <p id="metros-pilhas" class="text-gray-500">0.00 metros lineares</p>
-                     </div>
-                 </div>
-                 <div class="mt-6 border-t pt-4 text-center">
-                     <p class="text-gray-600">Medida Total do Acervo</p>
-                     <div class="flex items-center justify-center gap-2">
-                         <p id="total-geral" class="text-3xl font-extrabold text-gray-800">0.00 metros lineares</p>
-                         <button id="copy-button" onclick="copyResult()" class="btn btn-secondary" title="Copiar resultado">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16">
-                                 <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
-                                 <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
-                             </svg>
-                             <span>Copiar</span>
-                         </button>
-                     </div>
-                 </div>
+    <div class="max-w-5xl mx-auto space-y-6 pb-20 page-break">
+        
+        <div class="print-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center border-b-4 border-b-slate-800">
+            <div class="text-left">
+                <h1 class="text-xl md:text-2xl font-black text-slate-800 uppercase tracking-tight">ERCR Engenharia</h1>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Mecânica</p>
             </div>
-
-            <!-- Seção de Ações -->
-            <div class="mt-6 flex justify-center gap-4">
-                <button onclick="undoLastAddition()" class="btn btn-secondary">Desfazer Última Adição</button>
-                <button onclick="zerarCalculo()" class="btn btn-danger">Zerar Cálculo</button>
+            <div class="text-right mt-4 md:mt-0">
+                <h2 class="text-sm md:text-base font-bold text-slate-700 uppercase">Checklist de Inspeção e<br>Perícia Técnica Veicular</h2>
             </div>
-            
-            <!-- Seção de Instrução Final -->
-            <div id="instruction-section" class="mt-6 text-center bg-yellow-100 text-yellow-800 p-4 rounded-lg hidden">
-                <p class="font-semibold">*** INSTRUÇÃO ***</p>
-                <p id="instruction-text">Lembre-se de adicionar o valor em metros lineares (0.00) no campo 'Mensuração Total' da sua Listagem de Eliminação de Documentos.</p>
-            </div>
-
-            <!-- Seção do Fluxograma -->
-            <div class="mt-10 pt-6 border-t border-gray-200">
-                <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Fluxo de Eliminação de Documentos</h2>
-                <div class="timeline-container">
-                    <!-- Passo 1 -->
-                    <div class="timeline-step left">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                1. Processo
-                            </h3>
-                            <p>Abertura e formalização do processo administrativo para eliminação.</p>
-                        </div>
-                    </div>
-                    <!-- Passo 2 -->
-                    <div class="timeline-step right">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                                2. Comunicação Interna
-                            </h3>
-                            <p>Consulta aos setores produtores sobre o interesse nos documentos.</p>
-                        </div>
-                    </div>
-                    <!-- Passo 3 -->
-                    <div class="timeline-step left">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                                3. Listagem de Eliminação
-                            </h3>
-                            <p>Elaboração da lista detalhada dos documentos a serem eliminados.</p>
-                        </div>
-                    </div>
-                    <!-- Passo 4 -->
-                    <div class="timeline-step right">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                4. Certidão de Coleta
-                            </h3>
-                            <p>Emissão do documento que certifica o recolhimento dos materiais.</p>
-                        </div>
-                    </div>
-                    <!-- Passo 5 -->
-                    <div class="timeline-step left">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9"></path></svg>
-                                5. Publicação da Listagem
-                            </h3>
-                            <p>Divulgação oficial da listagem para conhecimento público.</p>
-                        </div>
-                    </div>
-                    <!-- Passo 6 -->
-                    <div class="timeline-step right">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-                                6. Certidão de Eliminação
-                            </h3>
-                            <p>Documento que atesta a efetiva destruição dos documentos.</p>
-                        </div>
-                    </div>
-                    <!-- Passo 7 -->
-                    <div class="timeline-step left">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-2.236 9.168-5.584C18.354 5.166 18 6.518 18 8a3 3 0 01-3 3H6.461A2.121 2.121 0 005.436 13.683z"></path></svg>
-                                7. Edital de Ciência
-                            </h3>
-                            <p>Elaboração do edital que informa sobre a eliminação futura.</p>
-                        </div>
-                    </div>
-                    <!-- Passo 8 -->
-                    <div class="timeline-step right">
-                        <div class="timeline-content">
-                           <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9"></path></svg>
-                                8. Publicação do Edital
-                            </h3>
-                            <p>Divulgação do edital em meio oficial para dar publicidade ao ato.</p>
-                        </div>
-                    </div>
-                    <!-- Passo 9 -->
-                    <div class="timeline-step left">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                                9. Termo de Eliminação
-                            </h3>
-                            <p>Criação do termo final que registra o descarte dos documentos.</p>
-                        </div>
-                    </div>
-                     <!-- Passo 10 -->
-                    <div class="timeline-step right">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9m-9 9a9 9 0 00-9-9"></path></svg>
-                                10. Publicação do Termo
-                            </h3>
-                            <p>Divulgação do termo de eliminação para transparência e registro.</p>
-                        </div>
-                    </div>
-                    <!-- Passo 11 -->
-                    <div class="timeline-step left">
-                        <div class="timeline-content">
-                            <h3>
-                                <svg class="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                11. Encerramento
-                            </h3>
-                            <p>Finalização e arquivamento do processo administrativo de eliminação.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Rodapé -->
-            <footer class="mt-10 pt-6 border-t border-gray-200 text-center text-xs text-gray-500">
-                <p class="font-semibold">Defensoria Pública do Estado do Rio de Janeiro</p>
-                <p>Sede Administrativa - Coordenação de Gestão Documental</p>
-                <p>Email: codoc@defensoria.rj.def.br</p>
-                <p>Avenida Marechal Câmara, 314 - CEP 20020-080 - Centro, RJ</p>
-            </footer>
         </div>
-    </div>
 
-    <script>
-        const LARGURA_CAIXA_ARQUIVO_CM = 13.5;
-        let totalMetrosCaixas = 0;
-        let totalMetrosPilhas = 0;
-        let totalCaixas = 0;
-        let totalPilhas = 0;
-        let lastAddition = { type: null, metros: 0, count: 0 };
-
-        function showMessage(text, type = 'success') {
-            const messageDiv = document.createElement('div');
-            messageDiv.textContent = text;
-            messageDiv.className = `fixed top-5 right-5 p-4 rounded-lg shadow-lg text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
-            document.body.appendChild(messageDiv);
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 3000);
-        }
-
-        function addCaixa() {
-            const input = document.getElementById('num-caixas');
-            const caixas = parseInt(input.value);
-
-            if (isNaN(caixas) || caixas <= 0) {
-                showMessage('Por favor, informe um número de caixas válido.', 'error');
-                return;
-            }
-
-            const medidaMetros = (caixas * LARGURA_CAIXA_ARQUIVO_CM) / 100;
-            totalMetrosCaixas += medidaMetros;
-            totalCaixas += caixas;
+        <div class="print-card bg-gray-50 p-5 rounded-2xl border border-gray-200">
+            <h4 class="text-xs font-bold text-gray-700 mb-4 flex items-center gap-2 uppercase tracking-widest border-b pb-2"><span class="w-1.5 h-4 bg-gray-600 rounded"></span> IDENTIFICAÇÃO DA INSPEÇÃO</h4>
             
-            lastAddition = { type: 'caixa', metros: medidaMetros, count: caixas };
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-[9px] font-black text-gray-400 uppercase mb-1">Empresa Responsável</label>
+                    <input type="text" value="ERCR Engenharia Mecânica" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black text-gray-400 uppercase mb-1">CNPJ</label>
+                    <input type="text" placeholder="00.000.000/0000-00" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                </div>
+                
+                <div>
+                    <label class="block text-[9px] font-black text-gray-400 uppercase mb-1">Data da Inspeção</label>
+                    <input type="text" placeholder="dd/mm/aaaa" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black text-gray-400 uppercase mb-1">Horário</label>
+                    <input type="text" placeholder="hh:mm" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-[9px] font-black text-gray-400 uppercase mb-1">Local da Inspeção / Município-UF</label>
+                    <input type="text" placeholder="Endereço ou Cidade" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                </div>
 
-            showMessage(`Adicionado: ${medidaMetros.toFixed(2)} m e ${caixas} caixas.`);
-            updateSummary();
-            input.value = '';
-        }
+                <div>
+                    <label class="block text-[9px] font-black text-gray-400 uppercase mb-1">Responsável pelo Veículo</label>
+                    <input type="text" placeholder="Nome do condutor/responsável" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black text-gray-400 uppercase mb-1">Cargo/Função</label>
+                    <input type="text" placeholder="Ex: Motorista" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black text-gray-400 uppercase mb-1">Telefone</label>
+                    <input type="text" placeholder="(00) 00000-0000" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-violet-500 outline-none">
+                </div>
+            </div>
+        </div>
 
-        function addPilha() {
-            const input = document.getElementById('altura-pilha');
-            const alturaCm = parseFloat(input.value);
-
-            if (isNaN(alturaCm) || alturaCm <= 0) {
-                showMessage('Por favor, informe uma altura válida em cm.', 'error');
-                return;
-            }
-
-            const medidaMetros = alturaCm / 100;
-            totalMetrosPilhas += medidaMetros;
-            totalPilhas++;
-
-            lastAddition = { type: 'pilha', metros: medidaMetros, count: 1 };
-
-            showMessage(`Adicionado: ${medidaMetros.toFixed(2)} m (1 pilha).`);
-            updateSummary();
-            input.value = '';
-        }
-
-        function undoLastAddition() {
-            if (lastAddition.type === null) {
-                showMessage('Nenhuma ação para desfazer.', 'error');
-                return;
-            }
-
-            if (lastAddition.type === 'caixa') {
-                totalMetrosCaixas -= lastAddition.metros;
-                totalCaixas -= lastAddition.count;
-            } else if (lastAddition.type === 'pilha') {
-                totalMetrosPilhas -= lastAddition.metros;
-                totalPilhas -= lastAddition.count;
-            }
-
-            showMessage(`Última adição (${lastAddition.metros.toFixed(2)} m) desfeita.`, 'success');
-            lastAddition = { type: null, metros: 0, count: 0 };
-            updateSummary();
-        }
-
-        function zerarCalculo() {
-            totalMetrosCaixas = 0;
-            totalMetrosPilhas = 0;
-            totalCaixas = 0;
-            totalPilhas = 0;
-            lastAddition = { type: null, metros: 0, count: 0 };
-            showMessage('Cálculo zerado com sucesso.', 'success');
-            updateSummary();
-        }
-        
-        function copyResult() {
-            const totalGeral = totalMetrosCaixas + totalMetrosPilhas;
-            const textToCopy = `${totalGeral.toFixed(2)} metros lineares`;
-
-            const textArea = document.createElement("textarea");
-            textArea.value = textToCopy;
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                showMessage(`Resultado "${textToCopy}" copiado para a área de transferência!`);
-            } catch (err) {
-                showMessage('Não foi possível copiar o texto.', 'error');
-            }
-            document.body.removeChild(textArea);
-        }
-
-        function updateSummary() {
-            document.getElementById('total-caixas').textContent = totalCaixas;
-            document.getElementById('metros-caixas').textContent = `${totalMetrosCaixas.toFixed(2)} metros lineares`;
+        <div class="print-card bg-blue-50 p-5 rounded-2xl border border-blue-200">
+            <h4 class="text-xs font-bold text-blue-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-blue-200 pb-2"><span class="w-1.5 h-4 bg-blue-600 rounded"></span> 1. IDENTIFICAÇÃO DO VEÍCULO</h4>
             
-            document.getElementById('total-pilhas').textContent = totalPilhas;
-            document.getElementById('metros-pilhas').textContent = `${totalMetrosPilhas.toFixed(2)} metros lineares`;
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.1 Placa</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.2 Marca</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.3 Modelo</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.4 Ano Fab.</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.5 Ano Mod.</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.6 Chassi</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.7 RENAVAM</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.8 Nº Motor</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.9 KM Hodômetro</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.10 Cor</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.11 Combustível</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+                <div><label class="block text-[9px] font-black text-blue-500 uppercase mb-1">1.12 Implemento</label><input type="text" class="w-full p-2 border border-blue-200 rounded-lg text-sm bg-white"></div>
+            </div>
+        </div>
 
-            const totalGeral = totalMetrosCaixas + totalMetrosPilhas;
-            document.getElementById('total-geral').textContent = `${totalGeral.toFixed(2)} metros lineares`;
+        <div class="print-card bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-slate-200 pb-2"><span class="w-1.5 h-4 bg-slate-600 rounded"></span> 2. CONDIÇÕES GERAIS E ESTRUTURAIS</h4>
             
-            const copyButton = document.getElementById('copy-button');
-            if (totalGeral > 0) {
-                copyButton.style.display = 'inline-flex';
-                document.getElementById('instruction-section').classList.remove('hidden');
-                document.getElementById('instruction-text').textContent = `Lembre-se de adicionar o valor em metros lineares (${totalGeral.toFixed(2)}) no campo 'Mensuração Total' da sua Listagem de Eliminação de Documentos.`;
-            } else {
-                copyButton.style.display = 'none';
-                document.getElementById('instruction-section').classList.add('hidden');
-            }
-        }
-        
-        // Initial state for copy button
-        document.getElementById('copy-button').style.display = 'none';
-    </script>
+            <div class="space-y-1">
+                <!-- Header do Checklist -->
+                <div class="hidden md:flex justify-between items-center py-2 px-3 bg-slate-200 rounded-t-lg">
+                    <span class="text-[10px] font-black text-slate-600 uppercase flex-1">Item Verificado</span>
+                    <div class="flex gap-4 w-32 justify-between">
+                        <span class="text-[10px] font-black text-slate-600">C</span>
+                        <span class="text-[10px] font-black text-slate-600">NC</span>
+                        <span class="text-[10px] font-black text-slate-600">N/A</span>
+                    </div>
+                </div>
+
+                <!-- Itens -->
+                <script>
+                    const itens2 = [
+                        "2.1 Estado geral da carroceria", "2.2 Estado geral da cabine", "2.3 Estado do interior da cabine",
+                        "2.4 Portas e fechaduras", "2.5 Bancos e fixações", "2.6 Fixações aparentes da cabine",
+                        "2.7 Estado do baú, caçamba ou implemento", "2.8 Plataforma/implemento fixado ao chassi",
+                        "2.9 Presença de corrosão aparente", "2.10 Presença de trincas aparentes",
+                        "2.11 Presença de deformações estruturais", "2.12 Rachaduras ou suportes soltos"
+                    ];
+                    itens2.forEach((item, i) => {
+                        document.write(`
+                            <div class="checklist-print-row flex flex-col md:flex-row md:items-center justify-between p-2.5 rounded-lg hover:bg-white transition-colors border-b border-slate-100 last:border-0">
+                                <span class="text-xs md:text-sm font-medium text-slate-700 mb-2 md:mb-0 flex-1">${item}</span>
+                                <div class="flex gap-6 md:gap-4 w-full md:w-32 justify-start md:justify-between px-2">
+                                    <label class="flex items-center gap-1 text-[10px] font-bold text-slate-500 cursor-pointer"><input type="radio" name="i2_${i}" value="C" class="w-4 h-4 text-green-500"><span class="md:hidden">C</span></label>
+                                    <label class="flex items-center gap-1 text-[10px] font-bold text-slate-500 cursor-pointer"><input type="radio" name="i2_${i}" value="NC" class="w-4 h-4 text-red-500"><span class="md:hidden">NC</span></label>
+                                    <label class="flex items-center gap-1 text-[10px] font-bold text-slate-500 cursor-pointer"><input type="radio" name="i2_${i}" value="NA" class="w-4 h-4 text-slate-400"><span class="md:hidden">N/A</span></label>
+                                </div>
+                            </div>
+                        `);
+                    });
+                </script>
+            </div>
+        </div>
+
+        <div class="only-print text-[8px] font-bold text-center border-t border-black pt-2 mt-4">ERCR ENGENHARIA MECÂNICA • (21) 96414-6270 • WWW.ERCRENGENHARIA.COM.BR</div>
+    </div> <!-- FIM PÁGINA 1 -->
+
+    <div class="max-w-5xl mx-auto space-y-6 pb-20 page-break">
+        <div class="print-card bg-orange-50 p-5 rounded-2xl border border-orange-200">
+            <h4 class="text-xs font-bold text-orange-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-orange-200 pb-2"><span class="w-1.5 h-4 bg-orange-600 rounded"></span> 3. MOTOR E SISTEMA DE ARREFECIMENTO</h4>
+            <div class="space-y-1">
+                <script>
+                    const itens3 = [
+                        "3.1 Nível do óleo lubrificante", "3.2 Estado do óleo lubrificante", "3.3 Presença de borra no óleo",
+                        "3.4 Nível do líquido de arrefecimento", "3.5 Condição do líquido de arrefecimento", "3.6 Funcionamento do sistema de arrefecimento",
+                        "3.7 Estado das mangueiras", "3.8 Estado das conexões", "3.9 Estado da tampa do reservatório",
+                        "3.10 Vazamentos aparentes de óleo", "3.11 Vazamentos de líquido de arrefecimento", "3.12 Vazamentos de combustível",
+                        "3.13 Vazamentos de fluido hidráulico", "3.14 Ruídos anormais em funcionamento", "3.15 Partida a frio",
+                        "3.16 Partida a quente", "3.17 Fumaça anormal no escapamento", "3.18 Estado do compartimento do motor",
+                        "3.19 Estado do sistema de escapamento"
+                    ];
+                    itens3.forEach((item, i) => {
+                        document.write(`
+                            <div class="checklist-print-row flex items-center justify-between p-2 rounded-lg hover:bg-white transition-colors border-b border-orange-100 last:border-0">
+                                <span class="text-xs font-medium text-slate-700 flex-1">${item}</span>
+                                <div class="flex gap-4 w-32 justify-between px-2">
+                                    <input type="radio" name="i3_${i}" value="C" class="w-4 h-4 text-green-500">
+                                    <input type="radio" name="i3_${i}" value="NC" class="w-4 h-4 text-red-500">
+                                    <input type="radio" name="i3_${i}" value="NA" class="w-4 h-4 text-slate-400">
+                                </div>
+                            </div>
+                        `);
+                    });
+                </script>
+            </div>
+        </div>
+
+        <div class="print-card bg-orange-50 p-5 rounded-2xl border border-orange-200">
+            <h4 class="text-xs font-bold text-orange-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-orange-200 pb-2"><span class="w-1.5 h-4 bg-orange-600 rounded"></span> 4. TRANSMISSÃO</h4>
+            <div class="space-y-1">
+                <script>
+                    const itens4 = [
+                        "4.1 Engates normais em todas as marchas", "4.2 Vazamentos aparentes na transmissão",
+                        "4.3 Condição do fluido de transmissão", "4.4 Trancos anormais durante operação", "4.5 Folgas aparentes na transmissão"
+                    ];
+                    itens4.forEach((item, i) => {
+                        document.write(`
+                            <div class="checklist-print-row flex items-center justify-between p-2 rounded-lg hover:bg-white transition-colors border-b border-orange-100 last:border-0">
+                                <span class="text-xs font-medium text-slate-700 flex-1">${item}</span>
+                                <div class="flex gap-4 w-32 justify-between px-2">
+                                    <input type="radio" name="i4_${i}" value="C" class="w-4 h-4 text-green-500">
+                                    <input type="radio" name="i4_${i}" value="NC" class="w-4 h-4 text-red-500">
+                                    <input type="radio" name="i4_${i}" value="NA" class="w-4 h-4 text-slate-400">
+                                </div>
+                            </div>
+                        `);
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="only-print text-[8px] font-bold text-center border-t border-black pt-2 mt-4">ERCR ENGENHARIA MECÂNICA • (21) 96414-6270 • WWW.ERCRENGENHARIA.COM.BR</div>
+    </div> <!-- FIM PÁGINA 2 -->
+
+    <div class="max-w-5xl mx-auto space-y-6 pb-20 page-break">
+        <div class="print-card bg-emerald-50 p-5 rounded-2xl border border-emerald-200">
+            <h4 class="text-xs font-bold text-emerald-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-emerald-200 pb-2"><span class="w-1.5 h-4 bg-emerald-600 rounded"></span> 5. SISTEMA DE DIREÇÃO</h4>
+            <div class="space-y-1">
+                <script>
+                    const itens5 = [
+                        "5.1 Folgas aparentes", "5.2 Estado dos terminais de direção", "5.3 Estado das barras de direção",
+                        "5.4 Estado da caixa de direção", "5.5 Vazamentos aparentes", "5.6 Funcionamento geral do sistema", "5.7 Alinhamento visual das rodas"
+                    ];
+                    itens5.forEach((item, i) => {
+                        document.write(`<div class="checklist-print-row flex items-center justify-between p-2 rounded-lg hover:bg-white transition-colors border-b border-emerald-100"><span class="text-xs font-medium text-slate-700 flex-1">${item}</span><div class="flex gap-4 w-32 justify-between px-2"><input type="radio" name="i5_${i}" value="C" class="w-4 h-4"><input type="radio" name="i5_${i}" value="NC" class="w-4 h-4"><input type="radio" name="i5_${i}" value="NA" class="w-4 h-4"></div></div>`);
+                    });
+                </script>
+            </div>
+        </div>
+
+        <div class="print-card bg-emerald-50 p-5 rounded-2xl border border-emerald-200">
+            <h4 class="text-xs font-bold text-emerald-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-emerald-200 pb-2"><span class="w-1.5 h-4 bg-emerald-600 rounded"></span> 6. SISTEMA DE SUSPENSÃO</h4>
+            <div class="space-y-1">
+                <script>
+                    const itens6 = [
+                        "6.1 Estado das molas", "6.2 Estado dos amortecedores", "6.3 Vazamentos nos amortecedores",
+                        "6.4 Estado das buchas", "6.5 Estado dos suportes", "6.6 Estado das bandejas", "6.7 Estado dos batentes", "6.8 Componentes com desgaste excessivo"
+                    ];
+                    itens6.forEach((item, i) => {
+                        document.write(`<div class="checklist-print-row flex items-center justify-between p-2 rounded-lg hover:bg-white transition-colors border-b border-emerald-100"><span class="text-xs font-medium text-slate-700 flex-1">${item}</span><div class="flex gap-4 w-32 justify-between px-2"><input type="radio" name="i6_${i}" value="C" class="w-4 h-4"><input type="radio" name="i6_${i}" value="NC" class="w-4 h-4"><input type="radio" name="i6_${i}" value="NA" class="w-4 h-4"></div></div>`);
+                    });
+                </script>
+            </div>
+        </div>
+
+        <div class="print-card bg-emerald-50 p-5 rounded-2xl border border-emerald-200">
+            <h4 class="text-xs font-bold text-emerald-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-emerald-200 pb-2"><span class="w-1.5 h-4 bg-emerald-600 rounded"></span> 7. SISTEMA DE FREIOS</h4>
+            <div class="space-y-1">
+                <script>
+                    const itens7 = [
+                        "7.1 Estado geral do sistema", "7.2 Estado das lonas", "7.3 Estado das pastilhas", "7.4 Estado dos discos",
+                        "7.5 Estado dos tambores", "7.6 Desgaste irregular", "7.7 Mangueiras e conexões", "7.8 Tubulações",
+                        "7.9 Vazamentos aparentes", "7.10 Freio de serviço", "7.11 Freio de estacionamento"
+                    ];
+                    itens7.forEach((item, i) => {
+                        document.write(`<div class="checklist-print-row flex items-center justify-between p-2 rounded-lg hover:bg-white transition-colors border-b border-emerald-100"><span class="text-xs font-medium text-slate-700 flex-1">${item}</span><div class="flex gap-4 w-32 justify-between px-2"><input type="radio" name="i7_${i}" value="C" class="w-4 h-4"><input type="radio" name="i7_${i}" value="NC" class="w-4 h-4"><input type="radio" name="i7_${i}" value="NA" class="w-4 h-4"></div></div>`);
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="only-print text-[8px] font-bold text-center border-t border-black pt-2 mt-4">ERCR ENGENHARIA MECÂNICA • (21) 96414-6270 • WWW.ERCRENGENHARIA.COM.BR</div>
+    </div><!-- FIM PÁGINA 3 -->
+
+    <div class="max-w-5xl mx-auto space-y-6 pb-20 page-break">
+        <div class="print-card bg-indigo-50 p-5 rounded-2xl border border-indigo-200">
+            <h4 class="text-xs font-bold text-indigo-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-indigo-200 pb-2"><span class="w-1.5 h-4 bg-indigo-600 rounded"></span> 8. RODAS E PNEUS</h4>
+            <div class="space-y-1">
+                <script>
+                    const itens8 = ["8.1 Estado geral dos pneus dianteiros", "8.2 Estado geral dos pneus traseiros", "8.3 Profundidade dos sulcos", "8.4 Desgaste irregular", "8.5 Cortes, rachaduras ou avarias", "8.6 Estado das rodas e fixação"];
+                    itens8.forEach((item, i) => document.write(`<div class="checklist-print-row flex items-center justify-between p-2 border-b border-indigo-100"><span class="text-xs font-medium text-slate-700">${item}</span><div class="flex gap-4 w-32 justify-between px-2"><input type="radio" name="i8_${i}" value="C" class="w-4 h-4"><input type="radio" name="i8_${i}" value="NC" class="w-4 h-4"><input type="radio" name="i8_${i}" value="NA" class="w-4 h-4"></div></div>`));
+                </script>
+            </div>
+        </div>
+
+        <div class="print-card bg-indigo-50 p-5 rounded-2xl border border-indigo-200">
+            <h4 class="text-xs font-bold text-indigo-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-indigo-200 pb-2"><span class="w-1.5 h-4 bg-indigo-600 rounded"></span> 9. SISTEMA ELÉTRICO E ILUMINAÇÃO</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <script>
+                        const itens9a = ["9.1 Bateria (Geral e Nível)", "9.2 Fixação e Terminais", "9.3 Alternador", "9.4 Fusíveis e relés", "9.5 Faróis Baixos / Altos"];
+                        itens9a.forEach((item, i) => document.write(`<div class="checklist-print-row flex items-center justify-between p-2 border-b border-indigo-100"><span class="text-xs font-medium text-slate-700">${item}</span><div class="flex gap-4 w-20 justify-between px-2"><input type="radio" name="i9_${i}" value="C" class="w-4 h-4"><input type="radio" name="i9_${i}" value="NC" class="w-4 h-4"></div></div>`));
+                    </script>
+                </div>
+                <div class="space-y-1">
+                    <script>
+                        const itens9b = ["9.6 Setas / Pisca-alerta", "9.7 Luz de Ré, Placa e Freio", "9.8 Instrumentos do Painel", "9.9 Buzina / Sirene Ré", "9.10 Sinalização refletiva"];
+                        itens9b.forEach((item, i) => document.write(`<div class="checklist-print-row flex items-center justify-between p-2 border-b border-indigo-100"><span class="text-xs font-medium text-slate-700">${item}</span><div class="flex gap-4 w-20 justify-between px-2"><input type="radio" name="i9b_${i}" value="C" class="w-4 h-4"><input type="radio" name="i9b_${i}" value="NC" class="w-4 h-4"></div></div>`));
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <div class="print-card bg-indigo-50 p-5 rounded-2xl border border-indigo-200">
+            <h4 class="text-xs font-bold text-indigo-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-indigo-200 pb-2"><span class="w-1.5 h-4 bg-indigo-600 rounded"></span> 10 E 11. VIDROS E SEGURANÇA</h4>
+            <div class="space-y-1">
+                <script>
+                    const itens10 = ["10.1 Para-brisa, Vidros e Retrovisores", "10.2 Limpadores e lavadores de para-brisa", "11.1 Cintos de segurança", "11.2 Triângulo, Macaco e Chave de roda", "11.3 Estepe e Extintor"];
+                    itens10.forEach((item, i) => document.write(`<div class="checklist-print-row flex items-center justify-between p-2 border-b border-indigo-100"><span class="text-xs font-medium text-slate-700">${item}</span><div class="flex gap-4 w-32 justify-between px-2"><input type="radio" name="i10_${i}" value="C" class="w-4 h-4"><input type="radio" name="i10_${i}" value="NC" class="w-4 h-4"><input type="radio" name="i10_${i}" value="NA" class="w-4 h-4"></div></div>`));
+                </script>
+            </div>
+        </div>
+        <div class="only-print text-[8px] font-bold text-center border-t border-black pt-2 mt-4">ERCR ENGENHARIA MECÂNICA • (21) 96414-6270 • WWW.ERCRENGENHARIA.COM.BR</div>
+    </div> <!-- FIM PÁGINA 4 -->
+
+    <div class="max-w-5xl mx-auto space-y-6 pb-20 page-break">
+        <div class="print-card bg-teal-50 p-5 rounded-2xl border border-teal-200">
+            <h4 class="text-xs font-bold text-teal-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-teal-200 pb-2"><span class="w-1.5 h-4 bg-teal-600 rounded"></span> 12 E 13. SEGURANÇA OPERACIONAL</h4>
+            <div class="space-y-1">
+                <script>
+                    const itens12 = ["12.1 Integridade estrutural e proteções", "13.1 Ruídos anormais ou vibrações excessivas", "13.2 Falhas ou condições anormais"];
+                    itens12.forEach((item, i) => document.write(`<div class="checklist-print-row flex items-center justify-between p-2 border-b border-teal-100"><span class="text-xs font-medium text-slate-700">${item}</span><div class="flex gap-4 w-32 justify-between px-2"><input type="radio" name="i12_${i}" value="C" class="w-4 h-4"><input type="radio" name="i12_${i}" value="NC" class="w-4 h-4"><input type="radio" name="i12_${i}" value="NA" class="w-4 h-4"></div></div>`));
+                </script>
+                <div class="checklist-print-row flex flex-col md:flex-row md:items-center justify-between p-2">
+                    <span class="text-xs font-medium text-slate-700 mb-2 md:mb-0">13.3 Teste funcional básico de deslocamento</span>
+                    <div class="flex gap-4 flex-wrap">
+                        <label class="flex items-center gap-1 text-[10px] font-bold text-slate-500 cursor-pointer"><input type="radio" name="i13_3" value="Realizado" class="w-4 h-4 text-teal-500"> REALIZADO</label>
+                        <label class="flex items-center gap-1 text-[10px] font-bold text-slate-500 cursor-pointer"><input type="radio" name="i13_3" value="NaoRealizado" class="w-4 h-4 text-red-500"> NÃO REALIZADO</label>
+                        <label class="flex items-center gap-1 text-[10px] font-bold text-slate-500 cursor-pointer"><input type="radio" name="i13_3" value="NA" class="w-4 h-4 text-slate-400"> N/A</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="print-card bg-red-50 p-5 rounded-2xl border border-red-200">
+            <h4 class="text-xs font-bold text-red-800 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-red-200 pb-2"><span class="w-1.5 h-4 bg-red-600 rounded"></span> 14. REGISTRO DE NÃO CONFORMIDADES</h4>
+            
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm print-card">
+                    <span class="inline-block bg-red-100 text-red-800 text-[10px] font-black px-2 py-1 rounded mb-3">NC-01</span>
+                    <div class="space-y-3">
+                        <div><label class="block text-[9px] font-black text-gray-400 uppercase">Item do Checklist</label><input type="text" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-gray-50"></div>
+                        <div><label class="block text-[9px] font-black text-gray-400 uppercase">Descrição da Não Conformidade</label><input type="text" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-gray-50"></div>
+                        <div><label class="block text-[9px] font-black text-gray-400 uppercase">Recomendação Técnica</label><input type="text" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-gray-50"></div>
+                        <div class="flex flex-col md:flex-row justify-between md:items-center gap-3">
+                            <div class="flex items-center gap-3">
+                                <label class="text-[9px] font-black text-gray-500 uppercase mr-2">Criticidade:</label>
+                                <label class="flex items-center gap-1 text-[10px] font-bold text-slate-600 cursor-pointer"><input type="radio" name="crit1" value="Baixa" class="w-4 h-4"> BAIXA</label>
+                                <label class="flex items-center gap-1 text-[10px] font-bold text-slate-600 cursor-pointer"><input type="radio" name="crit1" value="Media" class="w-4 h-4"> MÉDIA</label>
+                                <label class="flex items-center gap-1 text-[10px] font-bold text-slate-600 cursor-pointer"><input type="radio" name="crit1" value="Alta" class="w-4 h-4 text-red-600"> ALTA</label>
+                            </div>
+                            <div class="w-32"><label class="block text-[9px] font-black text-gray-400 uppercase">Prazo (dias)</label><input type="text" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-gray-50"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm print-card">
+                    <span class="inline-block bg-red-100 text-red-800 text-[10px] font-black px-2 py-1 rounded mb-3">NC-02</span>
+                    <div class="space-y-3">
+                        <div><label class="block text-[9px] font-black text-gray-400 uppercase">Item do Checklist</label><input type="text" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-gray-50"></div>
+                        <div><label class="block text-[9px] font-black text-gray-400 uppercase">Descrição</label><input type="text" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-gray-50"></div>
+                        <div class="flex flex-col md:flex-row justify-between md:items-center gap-3">
+                            <div class="flex items-center gap-3">
+                                <label class="text-[9px] font-black text-gray-500 uppercase mr-2">Criticidade:</label>
+                                <input type="radio" name="crit2" value="Baixa" class="w-4 h-4"><span class="text-[10px] font-bold text-slate-600">BAIXA</span>
+                                <input type="radio" name="crit2" value="Media" class="w-4 h-4"><span class="text-[10px] font-bold text-slate-600">MÉDIA</span>
+                                <input type="radio" name="crit2" value="Alta" class="w-4 h-4"><span class="text-[10px] font-bold text-slate-600">ALTA</span>
+                            </div>
+                            <div class="w-32"><label class="block text-[9px] font-black text-gray-400 uppercase">Prazo (dias)</label><input type="text" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-gray-50"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="print-card bg-slate-800 text-white p-6 rounded-2xl shadow-md">
+            <h4 class="text-xs font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-slate-600 pb-2">15. CONCLUSÃO DA INSPEÇÃO</h4>
+            
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">CLASSIFICAÇÃO FINAL DO VEÍCULO:</p>
+            <div class="flex flex-wrap gap-4 mb-6 bg-slate-700 p-4 rounded-xl border border-slate-600">
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="conclusao" value="Apto" class="w-5 h-5 accent-green-500"><strong class="text-xs uppercase tracking-tight text-green-400">APTO PARA OPERAÇÃO</strong></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="conclusao" value="AptoRestricao" class="w-5 h-5 accent-yellow-500"><strong class="text-xs uppercase tracking-tight text-yellow-400">APTO COM RESTRIÇÕES</strong></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="conclusao" value="Inapto" class="w-5 h-5 accent-red-500"><strong class="text-xs uppercase tracking-tight text-red-400">INAPTO PARA OPERAÇÃO</strong></label>
+            </div>
+            
+            <div class="space-y-3 mb-8">
+                <div><label class="block text-[9px] font-black text-slate-400 uppercase mb-1">Considerações Técnicas</label><input type="text" class="w-full p-2 border border-slate-600 rounded-lg text-sm bg-slate-700 text-white"></div>
+                <div><input type="text" class="w-full p-2 border border-slate-600 rounded-lg text-sm bg-slate-700 text-white"></div>
+                <div><input type="text" class="w-full p-2 border border-slate-600 rounded-lg text-sm bg-slate-700 text-white"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-slate-600">
+                <div class="text-center">
+                    <p class="text-xs font-black uppercase text-slate-400 tracking-widest mb-4">Responsável pela Inspeção</p>
+                    <div class="w-full max-w-xs mx-auto border-b border-slate-500 pb-1 mb-2 h-8"></div>
+                    <div class="flex gap-2 justify-center">
+                        <input type="text" placeholder="Nome / CREA" class="w-2/3 p-1 border border-slate-600 rounded bg-slate-700 text-xs text-center text-white placeholder-slate-400">
+                        <input type="text" placeholder="Data" class="w-1/3 p-1 border border-slate-600 rounded bg-slate-700 text-xs text-center text-white placeholder-slate-400">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs font-black uppercase text-slate-400 tracking-widest mb-4">Representante do Cliente</p>
+                    <div class="w-full max-w-xs mx-auto border-b border-slate-500 pb-1 mb-2 h-8"></div>
+                    <div class="flex gap-2 justify-center">
+                        <input type="text" placeholder="Nome / Cargo" class="w-2/3 p-1 border border-slate-600 rounded bg-slate-700 text-xs text-center text-white placeholder-slate-400">
+                        <input type="text" placeholder="Data" class="w-1/3 p-1 border border-slate-600 rounded bg-slate-700 text-xs text-center text-white placeholder-slate-400">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="only-print text-[8px] font-bold text-center border-t border-black pt-2 mt-4">ERCR ENGENHARIA MECÂNICA • (21) 96414-6270 • WWW.ERCRENGENHARIA.COM.BR</div>
+    </div> <!-- FIM PÁGINA 5 -->
+
 </body>
 </html>
 
