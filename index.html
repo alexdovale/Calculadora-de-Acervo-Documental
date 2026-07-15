@@ -177,7 +177,7 @@
 </head>
 <body>
 
-<div id="screen-lock">
+<div id="screen-lock" style="display:none">
   <div class="lock-box">
     <div class="lock-title">🔒 CHECKLIST DE INSPEÇÃO VEICULAR</div>
     <div id="lock-content"></div>
@@ -191,7 +191,6 @@
         <small>ERCR ENGENHARIA MECÂNICA · INSPEÇÕES REGISTRADAS</small>
       </div>
       <div style="display:flex;gap:8px;">
-        <button class="btn-link" id="btn-lock">🔒 Bloquear</button>
         <button class="primary" id="btn-new-inspection">+ Nova Inspeção</button>
       </div>
     </div>
@@ -1170,17 +1169,11 @@ async function initAuth(){
   }
 }
 
-document.getElementById('btn-lock').addEventListener('click', async ()=>{
-  try{ await window.storage.delete('pin-unlocked', false); }catch(err){}
-  screenList.style.display = 'none';
-  screenForm.style.display = 'none';
-  lockScreen.style.display = 'flex';
-  renderEnterPin();
-});
+// Login/PIN gate is disabled for now (functions kept above for future use).
 
 // init
 updateGauges();
-initAuth();
+showList();
 </script>
 </body>
 </html>
