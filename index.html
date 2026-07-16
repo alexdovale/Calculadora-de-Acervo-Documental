@@ -676,7 +676,12 @@ async function getNextSeqNumber(year){
     current = r && r.value ? parseInt(r.value,10) : 0;
   }catch(err){ current = 0; }
   const next = current + 1;
-  await window.storage.set(key, String(next), true);
+  try{
+    await window.storage.set(key, String(next), true);
+  }catch(err){
+    console.error('Falha ao salvar o contador sequencial:', err);
+    throw new Error('Não foi possível gerar o número sequencial. Verifique se este app está aberto dentro do Claude (o armazenamento não funciona se o arquivo for aberto fora dele).');
+  }
   return next;
 }
 
@@ -1078,17 +1083,22 @@ document.getElementById('btn-receipt').addEventListener('click', async ()=>{
 });
 
 document.getElementById('btn-pdf').addEventListener('click', async ()=>{
-  if(!currentSeq){
-    const year = new Date().getFullYear();
-    const number = await getNextSeqNumber(year);
-    currentSeq = {number, year};
-    updateSeqBadge();
+  try{
+    if(!currentSeq){
+      const year = new Date().getFullYear();
+      const number = await getNextSeqNumber(year);
+      currentSeq = {number, year};
+      updateSeqBadge();
+    }
+    emissionLog.push(new Date().toISOString());
+    updateEmissionLog();
+    await saveRecord();
+    buildPrintReport();
+    window.print();
+  }catch(err){
+    console.error(err);
+    alert(err.message || 'Não foi possível gerar o PDF. Tente novamente.');
   }
-  emissionLog.push(new Date().toISOString());
-  updateEmissionLog();
-  await saveRecord();
-  buildPrintReport();
-  window.print();
 });
 
 // ---------- Simple access PIN (basic gate, not real security) ----------
@@ -1172,6 +1182,13 @@ async function initAuth(){
 // Login/PIN gate is disabled for now (functions kept above for future use).
 
 // init
+if(typeof window.storage === 'undefined'){
+  console.warn('window.storage indisponível — este app precisa rodar dentro do Claude para salvar dados.');
+  const warn = document.createElement('div');
+  warn.style.cssText = 'background:#B5503F;color:#fff;padding:10px 16px;text-align:center;font-family:"IBM Plex Sans",sans-serif;font-size:13px;';
+  warn.textContent = '⚠️ Armazenamento indisponível: abra este app dentro do Claude (não como arquivo local) para poder salvar inspeções e gerar PDFs.';
+  document.body.prepend(warn);
+}
 updateGauges();
 showList();
 </script>
