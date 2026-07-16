@@ -111,6 +111,10 @@
   .photo-remove{position:absolute;top:-6px;right:-6px;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:11px;line-height:1;cursor:pointer;padding:0;}
   .nc-block .photo-cell{justify-content:flex-start;}
 
+  .sig-pad-wrap{position:relative;}
+  .sig-pad{width:100%;height:150px;display:block;background:#FFFEFB;border:1px dashed #B9B29A;border-radius:4px;touch-action:none;cursor:crosshair;}
+  .sig-clear{margin-top:6px;}
+
   /* Lock screen */
   #screen-lock{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--graphite);}
   .lock-box{background:var(--panel);border:1px solid #384049;border-radius:8px;padding:28px 24px;max-width:320px;width:88%;text-align:center;}
@@ -162,6 +166,7 @@
     .pr-checkbox.checked{background:#111;}
 
     .pr-class-opt{margin-bottom:4px;}
+    .pr-signature-img{max-width:180px;max-height:60px;margin-top:2px;}
 
     .pr-footer{position:fixed;left:0;bottom:0;width:100%;height:26mm;}
     .pr-wave-svg{position:absolute;left:0;bottom:0;width:100%;height:100%;display:block;}
@@ -286,17 +291,31 @@
           <div class="field" style="grid-column:1/-1"><label style="color:var(--ink);font-size:12px;text-transform:none;letter-spacing:0;font-weight:700;">Responsável pela Inspeção</label></div>
           <div class="field"><label>Nome</label><input type="text" id="respInsNome"></div>
           <div class="field"><label>CREA</label><input type="text" id="respInsCrea"></div>
-          <div class="field"><label>Assinatura (nome digitado)</label><input type="text" id="respInsAssinatura"></div>
+          <div class="field" style="grid-column:1/-1">
+            <label>Assinatura</label>
+            <div class="sig-pad-wrap">
+              <canvas id="sig-respIns" class="sig-pad" width="700" height="150"></canvas>
+              <button type="button" class="btn-link sig-clear" data-target="sig-respIns">Limpar Assinatura</button>
+            </div>
+            <input type="text" id="respInsAssinatura" placeholder="ou digite o nome, se preferir não assinar em tela" style="margin-top:6px;">
+          </div>
           <div class="field"><label>Data</label><input type="date" id="respInsData"></div>
         </div>
         <div class="field-grid" style="margin-top:16px;">
           <div class="field" style="grid-column:1/-1"><label style="color:var(--ink);font-size:12px;text-transform:none;letter-spacing:0;font-weight:700;">Representante do Cliente</label></div>
           <div class="field"><label>Nome</label><input type="text" id="repCliNome"></div>
           <div class="field"><label>Cargo</label><input type="text" id="repCliCargo"></div>
-          <div class="field"><label>Assinatura (nome digitado)</label><input type="text" id="repCliAssinatura"></div>
+          <div class="field" style="grid-column:1/-1">
+            <label>Assinatura</label>
+            <div class="sig-pad-wrap">
+              <canvas id="sig-repCli" class="sig-pad" width="700" height="150"></canvas>
+              <button type="button" class="btn-link sig-clear" data-target="sig-repCli">Limpar Assinatura</button>
+            </div>
+            <input type="text" id="repCliAssinatura" placeholder="ou digite o nome, se preferir não assinar em tela" style="margin-top:6px;">
+          </div>
           <div class="field"><label>Data</label><input type="date" id="repCliData"></div>
         </div>
-        <p class="footnote">Assinaturas físicas devem ser aplicadas na via impressa/PDF gerado, quando exigido.</p>
+        <p class="footnote">A assinatura em tela é salva junto da inspeção e aparece no PDF gerado.</p>
       </div>
     </section>
 
@@ -685,8 +704,77 @@ async function getNextSeqNumber(year){
   return next;
 }
 
+// ---------- Signature pads ----------
+function setupSignaturePad(canvas){
+  const ctx = canvas.getContext('2d');
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#1a1a1a';
+  let drawing = false;
+  canvas._hasDrawn = false;
+
+  function pos(e){
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return {x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY};
+  }
+  canvas.addEventListener('pointerdown', e=>{
+    drawing = true; canvas._hasDrawn = true;
+    const p = pos(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x,p.y);
+    canvas.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  canvas.addEventListener('pointermove', e=>{
+    if(!drawing) return;
+    const p = pos(e);
+    ctx.lineTo(p.x,p.y);
+    ctx.stroke();
+    e.preventDefault();
+  });
+  ['pointerup','pointerleave','pointercancel'].forEach(evt=>{
+    canvas.addEventListener(evt, ()=>{ drawing=false; });
+  });
+}
+
+function clearSignatureCanvas(canvas){
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  canvas._hasDrawn = false;
+}
+
+function loadSignatureIntoCanvas(canvas, dataUrl){
+  clearSignatureCanvas(canvas);
+  if(!dataUrl) return;
+  const img = new Image();
+  img.onload = ()=>{
+    canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+    canvas._hasDrawn = true;
+  };
+  img.src = dataUrl;
+}
+
+function getSignatureDataUrl(canvas){
+  return canvas._hasDrawn ? canvas.toDataURL('image/png') : null;
+}
+
+const sigRespIns = document.getElementById('sig-respIns');
+const sigRepCli = document.getElementById('sig-repCli');
+setupSignaturePad(sigRespIns);
+setupSignaturePad(sigRepCli);
+document.querySelectorAll('.sig-clear').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const canvas = document.getElementById(btn.dataset.target);
+    clearSignatureCanvas(canvas);
+  });
+});
+
 function collectState(){
-  const state = {text:{}, radios:{}, status: document.getElementById('status-select').value, photoItems: Array.from(attachedPhotos), seq: currentSeq, emissionLog: emissionLog};
+  const state = {text:{}, radios:{}, status: document.getElementById('status-select').value, photoItems: Array.from(attachedPhotos), seq: currentSeq, emissionLog: emissionLog,
+    signatures: { respIns: getSignatureDataUrl(sigRespIns), repCli: getSignatureDataUrl(sigRepCli) }};
   FORM_TEXT_IDS.forEach(id=>{
     const el = document.getElementById(id);
     if(el) state.text[id] = el.value;
@@ -706,6 +794,8 @@ function clearFormUI(){
   document.querySelectorAll('.opt,.crit,.class-opt').forEach(el=>el.classList.remove('sel','sel-apto','sel-restr','sel-inapto'));
   document.getElementById('status-select').value = 'rascunho';
   clearAllThumbs();
+  clearSignatureCanvas(sigRespIns);
+  clearSignatureCanvas(sigRepCli);
   currentSeq = null;
   emissionLog = [];
   updateSeqBadge();
@@ -743,6 +833,10 @@ function applyState(state){
   if(state.status) document.getElementById('status-select').value = state.status;
   currentSeq = state.seq || null;
   emissionLog = state.emissionLog || [];
+  if(state.signatures){
+    loadSignatureIntoCanvas(sigRespIns, state.signatures.respIns);
+    loadSignatureIntoCanvas(sigRepCli, state.signatures.repCli);
+  }
   updateSeqBadge();
   updateEmissionLog();
   updateGauges();
@@ -1003,16 +1097,22 @@ function buildPrintReport(){
   html += `<div class="pr-field-line" style="margin-top:8px;font-weight:700;">Considerações Técnicas</div>`;
   html += `<div class="pr-field-line" style="white-space:pre-wrap;">${esc(v('consideracoes'))}</div>`;
 
+  const sigResp = getSignatureDataUrl(sigRespIns);
+  const sigCli = getSignatureDataUrl(sigRepCli);
+  const sigBlock = (dataUrl, typedName) => dataUrl
+    ? `<div class="pr-field-line">Assinatura:<br><img class="pr-signature-img" src="${dataUrl}"></div>`
+    : `<div class="pr-field-line">Assinatura: <b>${esc(typedName)}</b></div>`;
+
   html += `<div class="pr-field-line" style="margin-top:12px;font-weight:700;">Responsável pela Inspeção</div>`;
   html += `<div class="pr-field-line">Nome: <b>${esc(v('respInsNome'))}</b></div>`;
   html += `<div class="pr-field-line">CREA: <b>${esc(v('respInsCrea'))}</b></div>`;
-  html += `<div class="pr-field-line">Assinatura: <b>${esc(v('respInsAssinatura'))}</b></div>`;
+  html += sigBlock(sigResp, v('respInsAssinatura'));
   html += `<div class="pr-field-line">Data: <b>${esc(fmtDateBR(v('respInsData')))}</b></div>`;
 
   html += `<div class="pr-field-line" style="margin-top:12px;font-weight:700;">Representante do Cliente</div>`;
   html += `<div class="pr-field-line">Nome: <b>${esc(v('repCliNome'))}</b></div>`;
   html += `<div class="pr-field-line">Cargo: <b>${esc(v('repCliCargo'))}</b></div>`;
-  html += `<div class="pr-field-line">Assinatura: <b>${esc(v('repCliAssinatura'))}</b></div>`;
+  html += sigBlock(sigCli, v('repCliAssinatura'));
   html += `<div class="pr-field-line">Data: <b>${esc(fmtDateBR(v('repCliData')))}</b></div>`;
 
   html += '</div>';
